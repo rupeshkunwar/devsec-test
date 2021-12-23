@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Build the Docker image
+    - name: Build the Docker Image
       run: docker build . --file Dockerfile --tag registry/owner/image:$(date +%s)
     - name: Public Ip
       id: ipv4
