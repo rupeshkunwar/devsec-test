@@ -16,11 +16,13 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag registry/owner/image:$(date +%s)
-    - name: Set the value
-      id: public-Ip
+    - name: Public Ip
+      id: ipv4
       run: |
-        echo "curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'=public_ip" >> $GITHUB_ENV
-    - name: Use the value
-      id: public-ip-output
+        echo 'PUBLIC_IP<<EOF' >> $GITHUB_ENV
+        curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//' >> $GITHUB_ENV
+        echo 'EOF' >> $GITHUB_ENV
+    - name: public ip output
+      id: ip-output
       run: |
-        echo "${{ env.public_ip }}" 
+        echo "${{ env.PUBLIC_IP }}"
