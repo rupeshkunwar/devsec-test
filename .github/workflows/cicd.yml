@@ -1,13 +1,12 @@
-name: Docker Image CI
-
+name: workflow
 on:
   push:
-    branches: [ main ]
+    branches: [ dev, main ]
   pull_request:
-    branches: [ main ]
+    branches: [ release ]
+  workflow_dispatch:
 
 jobs:
-
   build:
 
     runs-on: self-hosted
@@ -15,4 +14,138 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: docker-compose up -d
+    - name: Public Ip
+      id: ipv4
+      run: |
+        echo 'PUBLIC_IP<<EOF' >> $GITHUB_ENV
+        curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//' >> $GITHUB_ENV
+        echo 'EOF' >> $GITHUB_ENV
+  test:
+    name: testing the code
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Tests
+        run: |
+          python ./test/hello.py test
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  DeployDev:
+    name: Deploy to Dev 
+    if: |
+     github.event.ref == 'refs/heads/dev'
+    needs: [build , test  ]
+    runs-on: ubuntu-latest
+    environment: 
+      name: Dev
+      url: 'http:${{ env.PUBLIC_IP }}:5000'
+    steps:
+      - name: Deploy
+        run: echo I am deploying! 
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Build the container image
+        run: run: docker build . --file Dockerfile --tag devsec-test:$(date +%s)
+      - uses: anchore/scan-action@v3
+        with:
+            image: "localbuild/testimage:latest"
+            fail-build: false
+      - uses: actions/checkout@master
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: rupesh1050/devsec-test-dev
+          username: ${{ secrets.DOCKER_NAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          dockerfile: Dockerfile
+          tag_with_ref: 'refs/*'
+          labels: ${{ steps.meta.outputs.labels }}
+
+  DeployStaging:
+    name: Deploy to Staging 
+    if: |
+     github.event.ref == 'refs/heads/release' ||
+      github.event.ref == 'refs/tags/*'
+    needs: [DeployDev]
+    runs-on: ubuntu-latest
+    environment: 
+      name: Staging
+      url: 'http:${{ env.PUBLIC_IP }}:5000'
+    steps:
+      - name: Deploy
+        run: echo I am deploying! 
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Build the container image
+        run: run: docker build . --file Dockerfile --tag devsec-test:$(date +%s)
+      - uses: anchore/scan-action@v3
+        with:
+            image: "localbuild/testimage:latest"
+            fail-build: false
+      - uses: actions/checkout@master
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: rupesh1050/devsec-test-staging
+          username: ${{ secrets.DOCKER_NAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          dockerfile: Dockerfile
+          tag_with_ref: 'refs/*'
+          labels: ${{ steps.meta.outputs.labels }}
+  DeployProd:
+    name: Deploy to Production 
+    needs: [DeployStaging]
+    runs-on: ubuntu-latest
+    environment: 
+      name: Production
+      url: 'http:${{ env.PUBLIC_IP }}:5000'
+    steps:
+      - name: Deploy
+        run: echo I am deploying! 
+      - uses: actions/checkout@v2
+      - name: Build the container image
+        run: docker build . --file Dockerfile --tag localbuild/testimage:latest
+      - uses: anchore/scan-action@v3
+        with:
+            image: "localbuild/testimage:latest"
+            fail-build: false
+      - uses: actions/checkout@master
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: rupesh1050/devsec-test-prod
+          username: ${{ secrets.DOCKER_NAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          dockerfile: Dockerfile
+          context: .
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 from fastapi.testclient import TestClient
 
-from python import app
+from . import app
 
 
 class TestAPI(unittest.TestCase):
