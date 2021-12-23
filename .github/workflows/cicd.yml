@@ -59,19 +59,7 @@ jobs:
       url: 'http:${{ env.PUBLIC_IP }}:5000'
     steps:
       - name: Deploy
-        run: echo I am deploying! 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: echo I am deploying on Dev Environment ! 
       - name: Build the container image
         run: docker build . --file Dockerfile --tag devsec-test:latest
       - uses: anchore/scan-action@v3
@@ -100,19 +88,7 @@ jobs:
       url: 'http:${{ env.PUBLIC_IP }}:5000'
     steps:
       - name: Deploy
-        run: echo I am deploying! 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: echo I am on Deploying on Staging Environment! 
       - name: Build the container image
         run: docker build . --file Dockerfile --tag devsec-test:latest
       - uses: anchore/scan-action@v3
@@ -138,7 +114,7 @@ jobs:
       url: 'http:${{ env.PUBLIC_IP }}:5000'
     steps:
       - name: Deploy
-        run: echo I am deploying! 
+        run: echo This is Production deployment! 
       - uses: actions/checkout@v2
       - name: Build the container image
         run: docker build . --file Dockerfile --tag localbuild/testimage:latest
