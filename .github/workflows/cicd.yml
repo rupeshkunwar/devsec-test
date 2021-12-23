@@ -106,7 +106,7 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Build the container image
-        run: run: docker build . --file Dockerfile --tag devsec-test:$(date +%s)
+        run: docker build . --file Dockerfile --tag devsec-test:$(date +%s)
       - uses: anchore/scan-action@v3
         with:
             image: "localbuild/testimage:latest"
