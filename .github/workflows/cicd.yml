@@ -73,10 +73,10 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Build the container image
-        run: docker build . --file Dockerfile --tag devsec-test:$(date +%s)
+        run: docker build . --file Dockerfile --tag devsec-test:latest
       - uses: anchore/scan-action@v3
         with:
-            image: "localbuild/testimage:latest"
+            image: "devsec-test:latest"
             fail-build: false
       - uses: actions/checkout@master
       - name: Publish to Registry
@@ -114,10 +114,10 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Build the container image
-        run: docker build . --file Dockerfile --tag devsec-test:$(date +%s)
+        run: docker build . --file Dockerfile --tag devsec-test:latest
       - uses: anchore/scan-action@v3
         with:
-            image: "localbuild/testimage:latest"
+            image: "devsec-test:latest"
             fail-build: false
       - uses: actions/checkout@master
       - name: Publish to Registry
