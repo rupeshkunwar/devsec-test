@@ -24,7 +24,7 @@ jobs:
   test:
     name: testing the code
     needs: [build]
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
       - name: Run Tests
@@ -44,7 +44,7 @@ jobs:
     if: |
      github.event.ref == 'refs/heads/dev'
     needs: [build , test  ]
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     environment: 
       name: Dev
       url: 'http:${{ env.PUBLIC_IP }}:5000'
@@ -64,7 +64,7 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Build the container image
-        run: run: docker build . --file Dockerfile --tag devsec-test:$(date +%s)
+        run: docker build . --file Dockerfile --tag devsec-test:$(date +%s)
       - uses: anchore/scan-action@v3
         with:
             image: "localbuild/testimage:latest"
@@ -86,7 +86,7 @@ jobs:
      github.event.ref == 'refs/heads/release' ||
       github.event.ref == 'refs/tags/*'
     needs: [DeployDev]
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     environment: 
       name: Staging
       url: 'http:${{ env.PUBLIC_IP }}:5000'
@@ -124,7 +124,7 @@ jobs:
   DeployProd:
     name: Deploy to Production 
     needs: [DeployStaging]
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     environment: 
       name: Production
       url: 'http:${{ env.PUBLIC_IP }}:5000'
