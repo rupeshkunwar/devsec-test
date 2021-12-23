@@ -1,0 +1,13 @@
+fastapi
+pydantic
+typing-extensions
+pytest
+uvicorn
+gunicorn
+pre-commit
+pylint
+requests
+coverage
+urllib3
+flask
+redis

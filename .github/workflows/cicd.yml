@@ -1,0 +1,28 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker Image
+      run: docker build . --file Dockerfile --tag registry/owner/image:$(date +%s)
+    - name: Public Ip
+      id: ipv4
+      run: |
+        echo 'PUBLIC_IP<<EOF' >> $GITHUB_ENV
+        curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//' >> $GITHUB_ENV
+        echo 'EOF' >> $GITHUB_ENV
+    - name: public ip output
+      id: ip-output
+      run: |
+        echo "${{ env.PUBLIC_IP }}"
