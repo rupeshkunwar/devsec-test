@@ -21,6 +21,6 @@ jobs:
       run: |
         echo "curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'=public_ip" >> $GITHUB_ENV
     - name: Use the value
-      id: public-ip output
+      id: public-ip-output
       run: |
         echo "${{ env.public_ip }}" 
