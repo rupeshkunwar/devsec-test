@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM python:3.10.1-alpine3.15
+FROM python:3.11.0a3-alpine3.15
 LABEL MAINTAINER Rupesh Kumar rupesh.kumar@accern.com
 WORKDIR /code
 RUN python3 -m venv code-env
