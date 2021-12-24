@@ -8,7 +8,7 @@ image:
   repository: rupesh1050/devsec-test-prod
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: release
 
 imagePullSecrets: []
 nameOverride: ""
