@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: rupesh1050/devsec-test-prod
+  repository: rupesh1050/devsec-test-dev
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: release
+  tag: latest
 
 imagePullSecrets: []
 nameOverride: ""
