@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: rupesh1050/devsec-test-staging
+  repository: rupesh1050/devsec-test-dev
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
