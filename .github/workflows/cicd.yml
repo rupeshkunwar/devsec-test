@@ -79,7 +79,7 @@ jobs:
           tag_with_ref: 'refs/*'
           labels: ${{ steps.meta.outputs.labels }}
       - name: push to ECR
-      - uses: docker://ghcr.io/kciter/aws-ecr-action:latest
+        uses: docker://ghcr.io/kciter/aws-ecr-action:latest
         with:
           access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
