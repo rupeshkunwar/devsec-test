@@ -84,7 +84,7 @@ jobs:
           access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           account_id: ${{ secrets.AWS_ACCOUNT_ID }}
-          repo: public.ecr.aws/u8n4j0w9/rupesh1050
+          repo: rupesh1050
           region: ap-south-1
           tags: latest,${{ github.sha }}
           create_repo: true
