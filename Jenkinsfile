@@ -17,11 +17,12 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                withRegistry(https://hub.docker.com/r/rupesh1050[,docker]) {...}
-                node {
-                git '…' // checks out Dockerfile and some project sources
-                def newApp = docker.build "rupesh1050/devsec-test-dev:${env.BUILD_TAG}"
-                newApp.push()
+                withRegistry(https://hub.docker.com/r/rupesh1050[,docker]) {
+                    node {
+                    git '…' // checks out Dockerfile and some project sources
+                    def newApp = docker.build "rupesh1050/devsec-test-dev:${env.BUILD_TAG}"
+                    newApp.push()
+                    }
                 }
             }
         }
