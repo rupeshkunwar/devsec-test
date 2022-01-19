@@ -19,7 +19,7 @@ pipeline {
             steps {
                     withCredentials([usernamePassword(credentialsId: 'decker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_NAME')]) {
                     node {
-                    git '…' // checks out Dockerfile and some project sources
+                    git 'DockerFile' // checks out Dockerfile and some project sources
                     def newApp = docker.build "rupesh1050/devsec-test-dev:${env.BUILD_TAG}"
                     newApp.push()
                     }
