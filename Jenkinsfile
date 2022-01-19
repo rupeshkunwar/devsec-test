@@ -18,8 +18,11 @@ pipeline {
         stage('Deploy') {
             steps {
                 withRegistry(https://hub.docker.com/r/rupesh1050[,docker]) {...}
-                sh 'sudo -S docker build . --file Dockerfile --tag rupesh1050/devsec-test-dev:${BUILD_NUMBER}'
-                sh 'sudo -S docker push rupesh1050/devsec-test-dev:${BUILD_NUMBER}'
+                node {
+                git '…' // checks out Dockerfile and some project sources
+                def newApp = docker.build "rupesh1050/devsec-test-dev:${env.BUILD_TAG}"
+                newApp.push()
+                }
             }
         }
     }
