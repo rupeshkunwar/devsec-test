@@ -18,7 +18,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh 'sudo -S docker build . --file Dockerfile --tag devsec-test:latest'
-                sh 'sudo -S docker push rupesh1050/devsec-test-dev:$SHA'
+                sh 'sudo -S docker push rupesh1050/devsec-test-dev:${BUILD_NUMBER}'
             }
         }
     }
