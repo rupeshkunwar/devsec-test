@@ -49,6 +49,7 @@ jobs:
       - docker/build:
           image: rupesh1050/circleci 
           dockerfile: Dockerfile 
+          path: . 
 workflows:
   build_and_deploy:
     jobs:
