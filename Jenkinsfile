@@ -18,11 +18,8 @@ pipeline {
         stage('Deploy') {
             steps {
                     withCredentials([usernamePassword(credentialsId: 'decker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_NAME')]) {
-                    node {
-                    git 'DockerFile' // checks out Dockerfile and some project sources
-                    def newApp = docker.build "rupesh1050/devsec-test-dev:${env.BUILD_TAG}"
-                    newApp.push()
-                    }
+                    sh 'sudo -S docker build . --file Dockerfile --tag devsec-test:latest'
+                    sh 'sudo -S docker push rupesh1050/devsec-test-dev:$SHA'
                 }
 
             
