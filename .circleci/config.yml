@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  docker: circleci/docker@1.7.0
 jobs:
   build:
     docker:
@@ -38,3 +40,11 @@ jobs:
 
       - store_artifacts:
           path: /tmp/artifacts
+  docker-build:
+    docker:
+      # replace with your preferred image
+      - image: cimg/base:stable
+    steps:
+      - docker/build:
+          image: rupesh1050/circleci 
+          dockerfile: Dockerfile 
