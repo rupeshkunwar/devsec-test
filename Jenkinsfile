@@ -18,7 +18,7 @@ pipeline {
         stage('Deploy') {
             steps {
                     withCredentials([usernamePassword(credentialsId: 'decker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_NAME')]) {
-                    sh 'sudo -S docker build . --file Dockerfile --t rupesh1050/devsec-test-dev:${BUILD_NUMBER}'
+                    sh 'sudo -S docker build . --file Dockerfile -t rupesh1050/devsec-test-dev:${BUILD_NUMBER}'
                     sh 'sudo -S docker push rupesh1050/devsec-test-dev:${BUILD_NUMBER}'
                 }
 
