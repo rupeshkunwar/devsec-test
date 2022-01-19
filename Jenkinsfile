@@ -23,7 +23,7 @@ pipeline {
                     def newApp = docker.build "rupesh1050/devsec-test-dev:${env.BUILD_TAG}"
                     newApp.push()
                     }
-                }
+
             }
         }
     }
