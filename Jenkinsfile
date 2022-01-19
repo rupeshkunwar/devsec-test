@@ -12,14 +12,12 @@ pipeline {
         }
         stage('Test') {
             steps {
-                JOB_NAME: 'test'
                 sh 'sudo -S python3 -m pip install --upgrade pip && pip install -r requirements.txt'
                 sh 'python3 ./tests/test.py test'
             }
         }
         stage('Deploy') {
             steps {
-                JOB_NAME: 'the container image'
                 sh 'docker build . --file Dockerfile --tag devsec-test:latest'
                 echo 'Deploying....'
             }
