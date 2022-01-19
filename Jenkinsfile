@@ -18,7 +18,7 @@ pipeline {
         stage('Deploy') {
             steps {
                     withCredentials([usernamePassword(credentialsId: 'DOCKER_LOGIN', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_NAME')]) {
-                    sh 'echo '${DOCKER_PASSWORD}' | docker login -u ${DOCKER_NAME} --password-stdin'
+                     echo '${DOCKER_PASSWORD}' | sh 'docker login -u ${DOCKER_NAME} --password-stdin'
                     sh 'sudo -S docker build . --file Dockerfile -t rupesh1050/devsec-test-dev:${BUILD_NUMBER}'
                     sh 'sudo -S docker push rupesh1050/devsec-test-dev:${BUILD_NUMBER}'
                 }
