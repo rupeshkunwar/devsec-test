@@ -1,17 +1,24 @@
 name: workflow
 on:
   push:
-    branches: [ dev, main ]
-  pull_request:
-    branches: [ release ]
+    branches: [ main , release ]
   workflow_dispatch:
 
 jobs:
   build:
 
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        pip3 install -r requirements.txt
     - uses: actions/checkout@v2
     - name: Build the Docker image
       run: docker-compose up -d
@@ -29,7 +36,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run Tests
         run: |
-          python ./test/hello.py test
+          python3 ./tests/test.py test
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0  
@@ -42,7 +49,8 @@ jobs:
   DeployDev:
     name: Deploy to Dev 
     if: |
-     github.event.ref == 'refs/heads/dev'
+     github.event.ref == 'refs/heads/main' ||
+     github.event.ref == 'refs/heads/release'
     needs: [build , test  ]
     runs-on: ubuntu-latest
     environment: 
@@ -50,24 +58,15 @@ jobs:
       url: 'http:${{ env.PUBLIC_IP }}:5000'
     steps:
       - name: Deploy
-        run: echo I am deploying! 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
+        run: echo I am deploying on Dev Environment ! 
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          fetch-depth: 0 
       - name: Build the container image
-        run: run: docker build . --file Dockerfile --tag devsec-test:$(date +%s)
+        run: docker build . --file Dockerfile --tag devsec-test:latest
       - uses: anchore/scan-action@v3
         with:
-            image: "localbuild/testimage:latest"
+            image: "devsec-test:latest"
             fail-build: false
       - uses: actions/checkout@master
       - name: Publish to Registry
@@ -83,8 +82,7 @@ jobs:
   DeployStaging:
     name: Deploy to Staging 
     if: |
-     github.event.ref == 'refs/heads/release' ||
-      github.event.ref == 'refs/tags/*'
+     github.event.ref == 'refs/heads/release'
     needs: [DeployDev]
     runs-on: ubuntu-latest
     environment: 
@@ -92,24 +90,15 @@ jobs:
       url: 'http:${{ env.PUBLIC_IP }}:5000'
     steps:
       - name: Deploy
-        run: echo I am deploying! 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
+        run: echo I am on Deploying on Staging Environment! 
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          fetch-depth: 0 
       - name: Build the container image
-        run: run: docker build . --file Dockerfile --tag devsec-test:$(date +%s)
+        run: docker build . --file Dockerfile --tag devsec-test:latest
       - uses: anchore/scan-action@v3
         with:
-            image: "localbuild/testimage:latest"
+            image: "devsec-test:latest"
             fail-build: false
       - uses: actions/checkout@master
       - name: Publish to Registry
@@ -130,7 +119,7 @@ jobs:
       url: 'http:${{ env.PUBLIC_IP }}:5000'
     steps:
       - name: Deploy
-        run: echo I am deploying! 
+        run: echo This is Production deployment! 
       - uses: actions/checkout@v2
       - name: Build the container image
         run: docker build . --file Dockerfile --tag localbuild/testimage:latest

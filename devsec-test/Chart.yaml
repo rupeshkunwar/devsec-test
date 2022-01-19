@@ -1,0 +1,12 @@
+apiVersion: v2
+name: devsec-test
+description: kubernetes 
+maintainers:
+- email: rupesh.kumar@accern.com
+  name: Rupesh Kumar
+
+type: application
+
+version: 0.1.0
+
+appVersion: "1.16.0"
