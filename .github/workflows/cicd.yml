@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: custom-runner
+    runs-on: self-hosted
 
     steps:
     - uses: actions/checkout@v2
@@ -30,7 +30,7 @@ jobs:
   test:
     name: testing the code
     needs: [build]
-    runs-on: org-hosted
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
       - name: Run Tests
@@ -52,7 +52,7 @@ jobs:
      github.event.ref == 'refs/heads/release' ||
      github.event.ref == 'refs/heads/release'
     needs: [build , test  ]
-    runs-on: org-hosted
+    runs-on: self-hosted
     environment: 
       name: Dev
       url: 'http:${{ env.PUBLIC_IP }}:5000'
