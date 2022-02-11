@@ -21,7 +21,7 @@ jobs:
         pip3 install -r requirements.txt
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build -t rupesh1050/devsec-test-dev
+      run: docker build -t rupesh1050/devsec-test-dev Dockerfile
     - name: Public Ip
       id: ipv4
       run: |
