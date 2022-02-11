@@ -1,0 +1,36 @@
+
+
+helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version v1.7.1 \
+  --set prometheus.enabled=false \
+  --set installCRDs=true
+
+kubectl apply -f https://github.com/actions-runner-controller/actions-runner-controller/releases/download/v0.20.2/actions-runner-controller.yaml
+
+
+  kubectl create secret generic controller-manager \
+    -n actions \
+    --from-literal=github_app_id=171586 \
+    --from-literal=github_app_installation_id=23162690 \
+    --from-file=github_app_private_key=rupeshkunwar-runner.2022-02-10.private-key.pem
+
+
+helm repo add actions-runner-controller https://actions-runner-controller.github.io/actions-runner-controller
+helm repo update
+helm search repo actions
+
+
+
+helm install actions \
+    actions-runner-controller/actions-runner-controller \
+    --namespace actions \
+    --version 0.15.3 \
+    --set syncPeriod=1m
+
+kubectl create secret generic controller-manager \
+    -n actions-runner-system \
+    --from-literal=github_token=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
+

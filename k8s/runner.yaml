@@ -1,0 +1,10 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: Runner
+metadata:
+  name: k8s-single-runner
+  namespace: actions
+spec:
+  organization: rupeshkunwar
+  labels:
+    - org-hosted
+  env: []
