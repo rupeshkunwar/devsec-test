@@ -6,8 +6,7 @@ on:
 
 jobs:
   build:
-
-    runs-on: org-hosted
+    runs-on: custom-runner
 
     steps:
     - uses: actions/checkout@v2
