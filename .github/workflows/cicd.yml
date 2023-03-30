@@ -64,7 +64,7 @@ jobs:
             fail-build: false
       - uses: actions/checkout@master
       - name: Publish to Registry
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: rupesh1050/devsec-test-dev
           username: ${{ secrets.DOCKER_NAME }}
